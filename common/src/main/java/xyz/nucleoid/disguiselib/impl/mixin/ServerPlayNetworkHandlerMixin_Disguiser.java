@@ -5,12 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketCallbacks;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.*;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket.Entry;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
@@ -25,7 +24,11 @@ import xyz.nucleoid.disguiselib.api.EntityDisguise;
 import xyz.nucleoid.disguiselib.impl.mixin.accessor.*;
 import xyz.nucleoid.disguiselib.impl.packets.FakePackets;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket.BRAND;
 import static xyz.nucleoid.disguiselib.impl.DisguiseLib.DISGUISE_TEAM;
@@ -55,10 +58,10 @@ public abstract class ServerPlayNetworkHandlerMixin_Disguiser {
      * @param packet packet being sent
      */
     @Inject(
-            method = "sendPacket(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketCallbacks;)V",
+            method = "sendPacket(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketCallbacks;)V"
+                    target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V"
             ),
             cancellable = true
     )
@@ -197,7 +200,7 @@ public abstract class ServerPlayNetworkHandlerMixin_Disguiser {
         method = "onPlayerMove(Lnet/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket;)V",
         at = @At(
                 value = "INVOKE",
-                target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/server/world/ServerWorld;)V",
+                target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/server/world/ServerWorld;)V",
                 shift = At.Shift.AFTER
         )
     )
